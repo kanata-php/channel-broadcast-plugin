@@ -1,0 +1,36 @@
+<div>
+    <div>
+        <button onClick="sendMessage('example-first-action-message', 'example-first-action')">First Action</button>
+    </div>
+    <div>
+        <button onClick="sendMessage('example-second-action-message')">Second Action</button>
+    </div>
+    <div id="output"></div>
+</div>
+<script src="/js/app.js"></script>
+<script type="text/javascript">
+    var actionChannel = 'channel-action';
+    var websocket = new window.Conveyor({
+        protocol: 'ws',
+        uri: '127.0.0.1',
+        port: 8002,
+        channel: 'test-channel',
+        // listen: [actionChannel],
+        onReady: (e) => {
+            console.log('ready', e);
+        },
+        onMessage: (e) => {
+            console.log('message', e);
+            document.getElementById('output').innerHTML = e;
+        },
+    });
+
+    function sendMessage(message, action) {
+        if (typeof action === 'undefined') {
+            action = actionChannel
+        }
+
+        console.log('sending: ' + message);
+        websocket.send(message, action);
+    }
+</script>
