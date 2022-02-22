@@ -28,6 +28,9 @@ class ChannelBroadcast implements KanataPluginInterface
     public function start(): void
     {
         Hooks\WebSocket::start();
-        Hooks\Http::start();
+
+        if (config('channel-broadcast.sample-http', false)) {
+            Hooks\Http::start();
+        }
     }
 }
