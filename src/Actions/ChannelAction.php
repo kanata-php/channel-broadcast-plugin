@@ -21,7 +21,25 @@ class ChannelAction extends AbstractAction
     public function execute(array $data): mixed
     {
         /** @throws InvalidArgumentException */
-        // $this->validateData($data['params']);
+        $this->validateData($data);
+
+        try {
+            /**
+             * Filter: channel_message
+             * Description: Makes it possible for channel message processing before broadcasting.
+             * Expected return: array
+             * @param array $data
+             * @param ?string $channel
+             */
+            $data['data'] = apply_filters(
+                'channel_message',
+                [$data['data'], $this->getCurrentChannel()]
+            );
+        } catch (Exception $e) {
+            logger()->error('Channel message broadcast failed: ' . $e->getMessage());
+
+        }
+
         $this->send($data['data'], null, true);
         return null;
     }
@@ -34,8 +52,21 @@ class ChannelAction extends AbstractAction
      */
     public function validateData(array $data) : void
     {
-        // if (!isset($data['param'])) {
-        //     throw new InvalidArgumentException('');
-        // }
+        /**
+         * Filter: channel_message_valid
+         * Description: Makes it possible for channel validation customization.
+         * Expected return: bool
+         * @param bool $valid
+         * @param array $data
+         * @param ?string $channel
+         */
+        $valid = apply_filters(
+            'channel_message_valid',
+            [true, $data, $this->getCurrentChannel()]
+        );
+
+        if (!$valid) {
+            throw new InvalidArgumentException('Data was invalid.');
+        }
     }
 }
