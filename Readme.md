@@ -1,3 +1,4 @@
+> **This is deprecated due to Socket Conveyor having broadcast actions out of the box.**
 
 # Channel Broadcast Kanata Plugin
 
